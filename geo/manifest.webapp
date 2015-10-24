@@ -1,0 +1,16 @@
+{
+  "name": "Map",
+  "description": "My elevator pitch goes here",
+  "launch_path": "/index.html",
+  "icons": {
+    "256": "/images/face.jpg"
+     },
+  "developer": {
+    "name": "Your name or organization",
+    "url": "http://your-homepage-here.org"
+  },
+"permissions":{
+	"geolocation":{"description":"asdasdsdfsdf"}
+},
+  "default_locale": "en"
+}

@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+  
+  
+    <style>
+    	#map-canvas{
+			height:500px;
+			}
+    </style>
+    
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	
+	<script type="text/javascript"src="https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false">
+    </script>
+    
+    <script>
+	
+		var map;
+	
+		var service;
+
+		function handleSearchResults(results,status){
+				console.log(results);
+				
+				for(var i=0;i<results.length;i++){
+					
+					(function(){
+					var marker=new google.maps.Marker({
+						position:results[i].geometry.location,
+						map:map,
+						icon:'images/school.png'
+					});
+					
+					var infoWindow=new google.maps.InfoWindow({
+						content:results[i].name
+						});
+						
+					google.maps.event.addListener(marker,'mouseover',function(){
+						infoWindow.open(map,marker);
+						});
+						
+					google.maps.event.addListener(marker,'mouseout',function(){
+						infoWindow.close(map,marker);
+						});	
+						
+					})(i);
+				}
+			}
+
+		function performSearch(){
+			
+			
+				var $_GET = {},
+    			args = location.search.substr(1).split(/&/);
+				for (var i=0; i<args.length; ++i) {
+    				var tmp = args[i].split(/=/);
+    				if (tmp[0] != "") {
+        				$_GET[decodeURIComponent(tmp[0])] = decodeURIComponent(tmp.slice(1).join("").replace("+", " "));
+    				}
+				}
+				if($_GET['a']){
+					console.log('hello');
+					var request={
+					bounds:map.getBounds(),
+					name:$_GET['a']
+					}
+					
+					service.nearbySearch(request,handleSearchResults);
+				}else{
+					console.log('hello');
+					var request={
+					bounds:map.getBounds(),
+					name:'Restaurant'
+					}
+					service.nearbySearch(request,handleSearchResults);
+				}
+				
+				if($_GET['b']){
+					console.log('hello');
+					var request={
+					bounds:map.getBounds(),
+					name:$_GET['b']
+					}
+				}
+			
+			service.nearbySearch(request,handleSearchResults);
+			}
+
+    	function initialise(location){
+				console.log(location);
+
+				var currentLocation=new google.maps.LatLng(location.coords.latitude,location.coords.longitude);
+		
+				var mapOptions={
+						center:currentLocation,
+						zoom:12,
+						mapTypeId: google.maps.MapTypeId.ROADMAP
+					};
+					
+				map=new google.maps.Map(document.getElementById("map-canvas"),mapOptions);
+				
+				var marker=new google.maps.Marker({
+						position:currentLocation,
+						map:map
+					});
+					
+			    service = new google.maps.places.PlacesService(map);
+				google.maps.event.addListenerOnce(map,'bounds_changed',performSearch);
+				
+				var circleOptions={
+						strokeColor:"#0000FF",
+						strokeOpcaity:0.8,
+						strokeWeight:1.5,
+						fillColor:"#0000FF",
+						fillOpcaity:0.35,
+						map:map,
+						center:currentLocation,
+						radius:2000
+					}
+					
+				var circle=new google.maps.Circle(circleOptions);
+				
+		}
+		
+		$(document).ready(function(){
+				navigator.geolocation.getCurrentPosition(initialise);
+			});
+    </script>
+    
+    
+  </head>
+  
+  <body>
+    <div id="map-canvas"></div>
+    	
+    
+  </body>
+</html>
